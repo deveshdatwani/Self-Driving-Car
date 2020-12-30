@@ -21,19 +21,17 @@ for i in range(10):
     GPIO.setup(TRIG,GPIO.OUT)
     GPIO.setup(ECHO,GPIO.IN)
     GPIO.output(TRIG,True)
-    time.sleep(1)
+    time.sleep(0.1)
     GPIO.output(TRIG,False)
     while GPIO.input(11) == 0:
-        print('waiting for signal')
         start = time.time()
     while GPIO.input(11) == 1:
         end = time.time()
-        print(i)
-        break
-    tl = end - start
-    distance.append(tl/0.000058)
-    GPIO.cleanup()
     
+    tl = (end - start) * 34300 / 2
+    distance.append(tl)
+    GPIO.cleanup()
+
 # Run least square method on the 200 batch readings 
 # The model is 
 # distance  = H (jacobina matrix) x x (parameter) + e (error)  
@@ -41,4 +39,4 @@ for i in range(10):
 #distance = np.ones((200,1),dtype="float")
 H = np.ones((10,1),dtype="float")
 x_hat = inv(H.T.dot(H)).dot(H.T.dot(distance))
-print('The sitance is %s', x_hat)
+print('The distance is %f' % x_hat)
