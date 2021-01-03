@@ -32,7 +32,7 @@ for i in range(1000):
     print('reading number %d' % i)
     
     tl = (end - start) * 34300 / 2
-    distance.append(tl)
+    distance.append(round(tl,2))
     GPIO.cleanup()
 
 # Run least square method on the 200 batch readings 
