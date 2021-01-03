@@ -3,9 +3,11 @@ import numpy as np
 from numpy.linalg import inv
 import RPi.GPIO as GPIO
 import time
+import pandas as pd
+import matplotlib.pyplot as plt
 
-GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup()
+GPIO.setmode(GPIO.BOARD)
 
 # Set up pins
 TRIG = 12
@@ -16,7 +18,7 @@ print('Setting up pins')
 distance = []
 
 # Calculate a batch of 200 readings
-for i in range(10):
+for i in range(1000):
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(TRIG,GPIO.OUT)
     GPIO.setup(ECHO,GPIO.IN)
@@ -27,6 +29,7 @@ for i in range(10):
         start = time.time()
     while GPIO.input(11) == 1:
         end = time.time()
+    print('reading number %d' % i)
     
     tl = (end - start) * 34300 / 2
     distance.append(tl)
@@ -37,6 +40,12 @@ for i in range(10):
 # distance  = H (jacobina matrix) x x (parameter) + e (error)  
 
 #distance = np.ones((200,1),dtype="float")
-H = np.ones((10,1),dtype="float")
+H = np.ones((1000,1),dtype="float")
 x_hat = inv(H.T.dot(H)).dot(H.T.dot(distance))
 print('The distance is %f' % x_hat)
+
+# Plotting the readings as a distribution curve
+
+x = pd.DataFrame(distance, columns=['reading'])
+plt.hist(x['reading'].values, bins=50)
+plt.show()
